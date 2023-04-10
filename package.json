@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "dot-object": "^2.1.4",
+    "luxon": "^3.3.0",
     "mime": "^3.0.0",
     "object-to-formdata": "^4.4.2",
     "sortablejs": "^1.15.0",

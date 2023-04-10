@@ -9,37 +9,8 @@
                 'cursor-pointer': !value.processing,
             }"
         >
-            <div class="relative select-none group w-full h-40">
+            <div class="relative select-none w-full h-40">
                 <GalleryPicture :value="value" :field="field" />
-
-                <div
-                    v-if="!readonly && !value.processing && draggable"
-                    class="absolute inset-0 transition-all ease-in-out duration-300 opacity-0 group-hover:opacity-100"
-                >
-                    <div
-                        class="rounded-lg flex flex-col items-center justify-center overlay-content-bg w-full h-full cursor-pointer"
-                    >
-                        <svg
-                            class="fill-current w-8 h-8 text-white"
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 32 32"
-                            xml:space="preserve"
-                        >
-                            <path
-                                d="M20.3 12.4V11c0-.8-.6-1.4-1.4-1.4s-1.4.6-1.4 1.4v-.7c0-.8-.6-1.4-1.4-1.4-.8 0-1.4.6-1.4 1.4v.7c0-.8-.6-1.4-1.4-1.4-.8 0-1.4.6-1.4 1.4v2.2c-1.6 0-2.9 1.3-2.9 2.9 0 1.4.4 2.8 1.3 3.9l1.1 1.5c.8 1.1 2.1 1.8 3.5 1.8h3.7c1.3 0 2.6-.5 3.5-1.4s1.4-2.2 1.4-3.5v-5.9c0-.8-.6-1.4-1.4-1.4-1.1-.1-1.8.5-1.8 1.3h0zm-8.6.2v2.2m2.9-2.9v-1.4m2.9 1.4v-1.4m1.6-6.4L16 1l-3.1 3.1m6.2 23.8L16 31l-3.1-3.1m-8.8-15L1 16l3.1 3.1m23.8-6.2L31 16l-3.1 3.1"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            ></path>
-                        </svg>
-
-                        <p class="mt-3 text-xs font-semibold text-gray-500">
-                            Drag to reposition
-                        </p>
-                    </div>
-                </div>
 
                 <div
                     v-if="value.processing"
@@ -330,5 +301,9 @@ const regenerateFile = () => {
 <style>
 .overlay-content-bg {
     background-color: rgba(var(--colors-gray-900), 0.85);
+}
+
+.dragged .dragged-indicator {
+    opacity: 10;
 }
 </style>

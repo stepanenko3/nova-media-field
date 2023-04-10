@@ -151,7 +151,7 @@
                         <td
                             class="px-2 py-2 whitespace-nowrap dark:bg-gray-800"
                         >
-                            {{ value.created_at }}
+                            {{ formatDate(value.created_at) }}
                         </td>
                     </tr>
                     <tr v-if="Object.keys(value?.generated_conversions).length">
@@ -202,6 +202,8 @@
 </template>
 
 <script setup>
+import { computed } from "vue";
+import { DateTime } from "luxon";
 import useHumanizeFileSize from "../composables/useHumanizeFileSize";
 import useCopyToClipboard from "../composables/useCopyToClipboard";
 
@@ -220,4 +222,21 @@ const emit = defineEmits(["update"]);
 
 const { copyToClipboard } = useCopyToClipboard();
 const { humanFileSize } = useHumanizeFileSize();
+
+const timezone = computed(
+    () => Nova.config("userTimezone") || Nova.config("timezone")
+);
+
+const formatDate = (date) => {
+    return DateTime.fromISO(date)
+        .setZone(timezone.value)
+        .toLocaleString({
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            timeZoneName: "short",
+        });
+}
 </script>

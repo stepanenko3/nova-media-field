@@ -98,6 +98,8 @@ const draggable = computed(() => {
 onMounted(() => {
     if (draggable.value) {
         Sortable.create(galleryWrapper.value, {
+            animation: 150,
+            ghostClass: 'opacity-50',
             onSort: (el) => {
                 const { oldIndex, newIndex } = el;
 
