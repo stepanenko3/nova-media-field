@@ -19,6 +19,8 @@ export default function useCopyToClipboard() {
             document.execCommand("copy");
             input.remove();
         }
+
+        Nova.success('Success copied to clipboard');
     };
 
     return {
