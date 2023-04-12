@@ -177,7 +177,7 @@ class Media extends Field
             Arr::get(
                 $request->all($requestAttribute),
                 $requestAttribute,
-            ),
+            ) ?: [],
             fn ($fileData) => isset($fileData['id']),
         );
 

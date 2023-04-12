@@ -1,5 +1,4 @@
 {
-    "version": "1.0.0",
     "name": "stepanenko3/nova-media-field",
     "description": "A Laravel Nova field for laravel-medilibrary.",
     "keywords": [
@@ -29,12 +28,5 @@
         "sort-packages": true
     },
     "minimum-stability": "dev",
-    "prefer-stable": true,
-
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://laravel-nova.site"
-        }
-    ]
+    "prefer-stable": true
 }

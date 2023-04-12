@@ -51,9 +51,10 @@ export default {
     methods: {
         handleFileChange(newFiles) {
             const files = Array.from(newFiles);
-            const orderStart = Math.max(
-                ...this.field.value.map((o) => o.order_column)
-            );
+            const orderStart =
+                this.field.value.length > 0
+                    ? Math.max(...this.field.value.map((o) => o.order_column))
+                    : 0;
 
             files.forEach(async (file, index) => {
                 const fileId = uniqid();
