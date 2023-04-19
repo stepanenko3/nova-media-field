@@ -35,3 +35,13 @@ const fileExtension = computed(
         mime.getExtension(fileType.value)
 );
 </script>
+
+<style>
+.object-cover {
+    object-fit: cover;
+}
+
+.object-center {
+    object-position: center;
+}
+</style>
