@@ -81,7 +81,7 @@
                     </DropdownTrigger>
 
                     <template #menu>
-                        <DropdownMenu>
+                        <DropdownMenu width="auto">
                             <div class="flex flex-col py-1">
                                 <DropdownMenuItem
                                     as="button"
