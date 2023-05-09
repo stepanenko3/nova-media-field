@@ -8,11 +8,19 @@
 
 ## Description
 
-Text
+A Laravel Nova field for laravel-medilibrary.
 
 ## Features
 
-- Text
+- Multiple / Single image support
+- Multiple images auto-detect based on collection
+- Display validation errors
+- Show on index multiple images
+- Modal with media details
+- Show all conversions
+- Open / Download / Copy URL of media
+- Regenerate image with conversions
+- Custom properties support
 
 ## Requirements
 
@@ -28,16 +36,63 @@ composer require stepanenko3/nova-media-field
 
 ## Usage
 
-Text
+```php
+use use Stepanenko3\NovaMediaField\Fields\Media;
+...
 
-## Configuration
+Media::make(__('Image'), 'image'), // Single image. Auto detect from collection
 
-Text
+Media::make(__('Images'), 'images'), // Multiple images. Auto detect from collection
+
+
+// Validation rules
+
+Media::make('Images', 'images')
+    ->rules(['required', 'array', 'max:4'])
+    ->singleMediaRules(['image', 'max:80']),
+
+
+// Custom properties with validtion
+
+Media::make('Images', 'images')
+    ->customPropertiesFields([
+        Boolean::make('Active', 'active')
+            ->rules(['boolean']),
+
+        Markdown::make('Description', 'description')
+            ->rules(['max:1000']),
+    ])
+
+
+// Count images displayed on index
+
+Media::make('Images', 'images')
+    ->countOfImagesDisplayedOnIndex(2),
+
+
+// Full example
+
+Media::make('Images', 'images')
+    ->customPropertiesFields([
+        Boolean::make('Active', 'active')
+            ->rules(['boolean']),
+
+        Markdown::make('Description', 'description')
+            ->rules(['max:1000']),
+    ])
+    ->countOfImagesDisplayedOnIndex(2)
+    ->rules(['required', 'array', 'max:4'])
+    ->singleMediaRules(['image', 'max:80']),
+```
 
 ## Screenshots
 
 ![screenshot of field](screenshots/field-dark.png)
-![screenshot of field](screenshots/field-mobile.png)
+![screenshot of field](screenshots/field-detail.png)
+![screenshot of field](screenshots/field-index.png)
+![screenshot of field](screenshots/field-index2.png)
+![screenshot of field](screenshots/field-with-properties.png)
+![screenshot of field](screenshots/field-properties.png)
 
 ## Credits
 
