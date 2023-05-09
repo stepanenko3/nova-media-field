@@ -1,5 +1,4 @@
 {
-    "version": "1.0.0",
     "name": "stepanenko3/nova-media-field",
     "description": "A Laravel Nova field for laravel-medilibrary.",
     "keywords": [
