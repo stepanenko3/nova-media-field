@@ -181,6 +181,20 @@ class Media extends Field
             fn ($fileData) => isset($fileData['id']),
         );
 
+        if($request->isCreateOrAttachRequest()) {
+            app(Pipeline::class)
+                ->send($requestData)
+                ->through([
+                    fn ($payload, $next) => $this->deleteFiles($payload, $model, $attribute, $next),
+                    fn ($payload, $next) => $this->updateFilesCustomProperties($payload, $model, $attribute, $next),
+                    fn ($payload, $next) => $this->uploadFiles($payload, $model, $attribute, $next),
+                ])
+                ->then(function ($request): void {
+                    //
+                });
+            return;
+        }
+
         app(Pipeline::class)
             ->send($requestData)
             ->through([
