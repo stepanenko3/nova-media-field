@@ -181,14 +181,19 @@ class Media extends Field
             fn ($fileData) => isset($fileData['id']),
         );
 
+        $pipes = [
+            fn ($payload, $next) => $this->deleteFiles($payload, $model, $attribute, $next),
+            fn ($payload, $next) => $this->updateFilesCustomProperties($payload, $model, $attribute, $next),
+            fn ($payload, $next) => $this->uploadFiles($payload, $model, $attribute, $next),
+        ];
+
+        if (!$request->isCreateOrAttachRequest()) {
+            $pipes[] = fn ($payload, $next) => $this->reorderFiles($payload, $model, $attribute, $next);
+        }
+
         app(Pipeline::class)
             ->send($requestData)
-            ->through([
-                fn ($payload, $next) => $this->deleteFiles($payload, $model, $attribute, $next),
-                fn ($payload, $next) => $this->updateFilesCustomProperties($payload, $model, $attribute, $next),
-                fn ($payload, $next) => $this->uploadFiles($payload, $model, $attribute, $next),
-                fn ($payload, $next) => $this->reorderFiles($payload, $model, $attribute, $next),
-            ])
+            ->through($pipes)
             ->then(function ($request): void {
                 //
             });
