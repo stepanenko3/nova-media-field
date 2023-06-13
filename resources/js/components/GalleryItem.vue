@@ -5,7 +5,7 @@
             :class="{
                 'border-transparent': !error,
                 'border-red-500': !!error,
-                'pointer-events-none opacity-50': value.processing,
+                'pointer-events-none': value.processing,
                 'cursor-pointer': !value.processing,
             }"
         >
@@ -15,13 +15,14 @@
                 <div
                     v-if="value.processing"
                     v-cloak
-                    class="flex items-center justify-center absolute inset-0 transition-default bg-theme-secondary-900 w-full h-full z-10"
+                    class="flex items-center justify-center rounded-lg absolute inset-0 bg-white transition-default bg-theme-secondary-900 w-full h-full z-10"
+                    style="--tw-bg-opacity: 0.5"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 20 20"
                         xml:space="preserve"
-                        class="w-20 h-20 text-white animation-spin duration-1000"
+                        class="w-20 h-20 text-white animate-spin duration-1000"
                     >
                         <circle
                             fill="none"
@@ -305,5 +306,15 @@ const regenerateFile = () => {
 
 .dragged .dragged-indicator {
     opacity: 10;
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(1turn);
+    }
 }
 </style>
