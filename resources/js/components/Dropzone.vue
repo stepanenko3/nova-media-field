@@ -47,12 +47,12 @@
                 'pointer-events-none': dragging,
             }"
         >
-            <div
+            <!-- <div
                 class="flex items-center justify-center p-2 cursor-pointer bg-white dark:bg-gray-800 border border-gray-500 dark:border-gray-800 rounded-lg text-gray-500 dark:text-gray-200 hover:opacity-75"
                 @click.prevent.stop="emit('openFileManager')"
             >
                 {{ __("File manager") }}
-            </div>
+            </div> -->
 
             <label
                 class="flex items-center justify-center p-2 cursor-pointer bg-white dark:bg-gray-800 border border-gray-500 dark:border-gray-800 rounded-lg text-gray-500 dark:text-gray-200 hover:opacity-75"
@@ -100,7 +100,9 @@
                     ></path>
                 </svg>
 
-                <span class="text-sm text-gray-500 dark:text-gray-400 font-semibold">
+                <span
+                    class="text-sm text-gray-500 dark:text-gray-400 font-semibold"
+                >
                     {{ __("Drop your files here") }}
                 </span>
             </div>

@@ -2,10 +2,10 @@
 
 namespace Stepanenko3\NovaMediaField;
 
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Nova\Events\ServingNova;
 use Laravel\Nova\Nova;
-use Illuminate\Support\Facades\Route;
 use Stepanenko3\NovaMediaField\Http\Controllers\RegenerateController;
 
 class FieldServiceProvider extends ServiceProvider
@@ -18,12 +18,27 @@ class FieldServiceProvider extends ServiceProvider
         Nova::serving(function (ServingNova $event): void {
             Nova::script('nova-media-field', __DIR__ . '/../dist/js/field.js');
             Nova::style('nova-media-field', __DIR__ . '/../dist/css/field.css');
+            Nova::translations($this->getTranslations());
         });
 
         $this->app->booted(function (): void {
             $this->routes();
-            // $this->translations();
         });
+    }
+
+    private function getTranslations(): array
+    {
+        $translationFile = __DIR__ . '/../lang/' . app()->getLocale() . '.json';
+
+        if (! is_readable($translationFile)) {
+            $translationFile = __DIR__ . '/../lang' . app()->getLocale() . '.json';
+
+            if (! is_readable($translationFile)) {
+                return [];
+            }
+        }
+
+        return json_decode(file_get_contents($translationFile), true);
     }
 
     public function routes(): void
@@ -49,6 +64,6 @@ class FieldServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+
     }
 }

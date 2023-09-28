@@ -1,44 +1,44 @@
-const mix = require('laravel-mix')
-const webpack = require('webpack')
-const path = require('path')
+const mix = require("laravel-mix");
+const webpack = require("webpack");
+const path = require("path");
 
 class NovaExtension {
     name() {
-        return 'nova-extension'
+        return "nova-extension";
     }
 
     register(name) {
-        this.name = name
+        this.name = name;
     }
 
     webpackPlugins() {
         return new webpack.ProvidePlugin({
-            _: 'lodash',
-            Errors: 'form-backend-validation',
-        })
+            _: "lodash",
+            Errors: "form-backend-validation",
+        });
     }
 
     webpackConfig(webpackConfig) {
         webpackConfig.externals = {
-            vue: 'Vue',
-        }
+            vue: "Vue",
+        };
 
         webpackConfig.resolve.alias = {
             ...(webpackConfig.resolve.alias || {}),
-            'laravel-nova': path.join(
+            "laravel-nova": path.join(
                 __dirname,
-                'vendor/laravel/nova/resources/js/mixins/packages.js'
+                "vendor/laravel/nova/resources/js/mixins/packages.js"
             ),
-            'nova-file-manager': path.join(
+            "nova-file-manager": path.join(
                 __dirname,
-                'vendor/stepanenko3/nova-filemanager/dist/js/package.js'
+                "vendor/stepanenko3/nova-filemanager/dist/js/package.js"
             ),
-        }
+        };
 
         webpackConfig.output = {
             uniqueName: this.name,
-        }
+        };
     }
 }
 
-mix.extend('nova', new NovaExtension())
+mix.extend("nova", new NovaExtension());
