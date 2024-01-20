@@ -26,12 +26,25 @@ A Laravel Nova field for laravel-medilibrary.
 
 - `php: >=8.0`
 - `laravel/nova: ^4.0`
+- `spatie/laravel-medilibrary`
 
 ## Installation
 
 ```bash
 # Install the package
 composer require stepanenko3/nova-media-field
+```
+
+```php
+//register filemanager
+app/Providers/NovaServiceProvider.php
+
+  public function tools(): array
+  {
+    return [
+        new FileManagerTool,
+    ];
+  }
 ```
 
 ## Usage
