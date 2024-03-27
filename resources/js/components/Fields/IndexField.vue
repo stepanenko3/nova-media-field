@@ -1,6 +1,6 @@
 <template>
     <div
-        class="flex items-center justify-start"
+        class="flex items-center justify-start nova-media-field"
         :style="{
             width: `${width}px`,
         }"

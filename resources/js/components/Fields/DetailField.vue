@@ -1,7 +1,7 @@
 <template>
     <PanelItem :index="index" :field="field">
         <template #value>
-            <div class="image-gallery-field" :class="{ dark: dark }">
+            <div class="nova-media-field">
                 <Gallery :value="field.value" :field="field" :readonly="true" />
             </div>
         </template>
@@ -11,9 +11,9 @@
 <script setup lang="ts">
 defineProps<{
     index: number;
-    resource: object;
+    resource: any;
     resourceName: string;
     resourceId: string;
-    field: object;
+    field: any;
 }>();
 </script>
