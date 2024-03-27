@@ -1,30 +1,38 @@
 {
-  "private": true,
-  "scripts": {
-    "dev": "npm run development",
-    "development": "mix",
-    "watch": "mix watch",
-    "watch-poll": "mix watch -- --watch-options-poll=1000",
-    "hot": "mix watch --hot",
-    "prod": "npm run production",
-    "production": "mix --production",
-    "nova:install": "npm --prefix='../../vendor/laravel/nova' ci"
-  },
-  "devDependencies": {
-    "@vue/compiler-sfc": "^3.2.22",
-    "form-backend-validation": "^2.3.3",
-    "laravel-mix": "^6.0.41",
-    "lodash": "^4.17.21",
-    "postcss": "^8.3.11",
-    "vue-loader": "^16.8.3"
-  },
-  "dependencies": {
-    "dot-object": "^2.1.4",
-    "luxon": "^3.3.0",
-    "mime": "^3.0.0",
-    "object-to-formdata": "^4.4.2",
-    "sortablejs": "^1.15.0",
-    "toastedjs": "^0.0.2",
-    "uniqid": "^5.4.0"
-  }
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite build --watch",
+        "build": "vite build",
+        "nova:install": "npm --prefix='vendor/laravel/nova' ci",
+        "file-manager:install": "npm --prefix='vendor/stepanenko3/nova-filemanager' ci"
+    },
+    "devDependencies": {
+        "@inertiajs/inertia": "^0.11.1",
+        "@inertiajs/inertia-vue3": "^0.6.0",
+        "@types/dot-object": "^2.1.6",
+        "@types/luxon": "^3.4.2",
+        "@types/sortablejs": "^1.15.8",
+        "@types/uniqid": "^5.3.4",
+        "@vitejs/plugin-vue": "^5.0.4",
+        "@vue/compiler-sfc": "^3.2.22",
+        "postcss": "^8.3.11",
+        "sass": "^1.72.0",
+        "vite": "^5.2.6"
+    },
+    "dependencies": {
+        "@rollup/plugin-alias": "^5.1.0",
+        "@vueuse/core": "^10.9.0",
+        "autoprefixer": "^10.4.19",
+        "dot-object": "^2.1.4",
+        "form-backend-validation": "^2.4.0",
+        "luxon": "^3.4.4",
+        "mime": "^4.0.1",
+        "object-to-formdata": "^4.5.1",
+        "pinia": "^2.1.7",
+        "sortablejs": "^1.15.2",
+        "tailwindcss": "^3.4.1",
+        "uniqid": "^5.4.0",
+        "vue": "^3.4.21"
+    }
 }

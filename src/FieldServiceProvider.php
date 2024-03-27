@@ -10,19 +10,25 @@ use Stepanenko3\NovaMediaField\Http\Controllers\RegenerateController;
 
 class FieldServiceProvider extends ServiceProvider
 {
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
+        $this->loadTranslationsFrom(
+            path: __DIR__ . '/../lang',
+            namespace: 'nova-media-field',
+        );
+
+        $this->loadJsonTranslationsFrom(
+            path: __DIR__ . '/../lang',
+        );
+
         Nova::serving(function (ServingNova $event): void {
             Nova::script('nova-media-field', __DIR__ . '/../dist/js/field.js');
             Nova::style('nova-media-field', __DIR__ . '/../dist/css/field.css');
+            Nova::translations(__DIR__ . '/../lang/' . app()->getLocale() . '.json');
         });
 
         $this->app->booted(function (): void {
             $this->routes();
-            // $this->translations();
         });
     }
 
@@ -44,9 +50,6 @@ class FieldServiceProvider extends ServiceProvider
             });
     }
 
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         //

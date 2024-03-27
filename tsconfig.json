@@ -1,0 +1,34 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "target": "ES2022",
+        "useDefineForClassFields": true,
+        "module": "ES2022",
+        "moduleResolution": "Node",
+        "strict": true,
+        "jsx": "preserve",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "esModuleInterop": true,
+        "lib": ["ESNext", "DOM"],
+        "skipLibCheck": true,
+        "noEmit": true,
+        "outDir": "dist",
+        "baseUrl": "resources/js",
+        "paths": {
+            "@/*": ["./resource/js/*"],
+            "@vendor/*": ["./vendor/*"],
+        }
+    },
+    "include": [
+        "resources/**/*.ts",
+        "resources/**/*.d.ts",
+        "resources/**/*.tsx",
+        "resources/**/*.vue", "resources/js/composables/useCopyToClipboard.js",
+    ],
+    "references": [
+        {
+            "path": "./tsconfig.node.json"
+        }
+    ]
+}

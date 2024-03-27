@@ -8,27 +8,12 @@
     </PanelItem>
 </template>
 
-<script setup>
-const props = defineProps({
-    index: {
-        type: Number,
-        required: true,
-    },
-    resource: {
-        type: Object,
-        required: true,
-    },
-    resourceName: {
-        type: String,
-        required: true,
-    },
-    resourceId: {
-        type: String,
-        required: true,
-    },
-    field: {
-        type: Object,
-        required: true,
-    },
-});
+<script setup lang="ts">
+defineProps<{
+    index: number;
+    resource: object;
+    resourceName: string;
+    resourceId: string;
+    field: object;
+}>();
 </script>

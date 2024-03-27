@@ -1,5 +1,5 @@
 <template>
-    <div v-if="value.length > 0">
+    <div v-if="value.length > 0" class="nova-media-field">
         <ul ref="galleryWrapper" class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <GalleryItem
                 v-for="(image, index) in value"
@@ -9,9 +9,9 @@
                 :readonly="readonly"
                 :draggable="draggable"
                 :errors="errorsData"
-                @input="($event) => updateFile($event)"
-                @delete="($event) => deleteFile($event)"
-                @showDetail="($event) => (detailedMedia = $event)"
+                @input="updateFile"
+                @delete="deleteFile"
+                @showDetail="(e: any) => (detailedMedia = e)"
                 @editCustomProperties="customPropertiesImageIndex = index"
             />
         </ul>
@@ -19,7 +19,7 @@
         <GalleryModal
             :value="detailedMedia"
             :field="field"
-            @update="($event) => (detailedMedia = $event)"
+            @update="(e: any) => (detailedMedia = e)"
         />
 
         <CustomPropertiesModal
@@ -28,46 +28,40 @@
             :fields="field.customPropertiesFields"
             :field="field"
             :errors="errorsData"
-            @input="($event) => updateFile($event)"
+            @input="updateFile"
             @close="customPropertiesImageIndex = null"
         />
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import Sortable from "sortablejs";
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, Ref } from "vue";
 import useDotObject from "../composables/useDotObject";
 
-const props = defineProps({
-    value: {
-        type: Array,
-        required: true,
-    },
-    field: {
-        type: Object,
-        required: true,
-    },
-    readonly: {
-        type: Boolean,
-        default: false,
-    },
-    multiple: {
-        type: Boolean,
-        default: false,
-    },
-    errors: {
-        type: Object,
-    },
-});
+const props = withDefaults(
+    defineProps<{
+        value: any[];
+        field: any;
+        readonly?: boolean;
+        multiple?: boolean;
+        errors: any;
+    }>(),
+    {
+        readonly: false,
+        multiple: false,
+    }
+);
 
-const emit = defineEmits(["input"]);
+const emit = defineEmits<{
+    (e: "input", value: any): void;
+}>();
 
-const galleryWrapper = ref(null);
-const detailedMedia = ref(null);
-const customPropertiesImageIndex = ref(null);
+const galleryWrapper: Ref<HTMLElement | null> = ref(null);
+const detailedMedia: Ref<any> = ref(null);
+const customPropertiesImageIndex: Ref<any | null> = ref(null);
 
-const deleteFile = (id) => {
+const deleteFile = (id: string | number) => {
     const index = props.value.findIndex((file) => file.id === id);
 
     props.value.splice(index, 1);
@@ -75,7 +69,7 @@ const deleteFile = (id) => {
     emit("input", props.value);
 };
 
-const updateFile = (payload) => {
+const updateFile = (payload: any) => {
     const value = props.value.map((file) => {
         if (file.id === payload.id) {
             file = payload;
@@ -91,25 +85,23 @@ const { fromDotCase } = useDotObject();
 
 const errorsData = computed(() => fromDotCase(props?.errors?.errors || {}));
 
-const draggable = computed(() => {
-    return props.multiple && !props.readonly;
-});
+const draggable = computed(() => props.multiple && !props.readonly);
 
 onMounted(() => {
-    if (draggable.value) {
+    if (draggable.value && galleryWrapper.value) {
         Sortable.create(galleryWrapper.value, {
             animation: 150,
-            ghostClass: 'opacity-50',
+            ghostClass: "opacity-50",
             onSort: (el) => {
                 const { oldIndex, newIndex } = el;
 
-                sortHandler(oldIndex, newIndex);
+                sortHandler(oldIndex || 0, newIndex || 0);
             },
         });
     }
 });
 
-function sortHandler(oldIndex, newIndex) {
+function sortHandler(oldIndex: number, newIndex: number) {
     const item = props.value[oldIndex];
     const images = [...props.value];
     images.splice(oldIndex, 1);
@@ -122,63 +114,3 @@ function sortHandler(oldIndex, newIndex) {
     emit("input", images);
 }
 </script>
-
-<style>
-.gap-4 {
-    gap: 1rem;
-}
-
-.grid-cols-2 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-@media (min-width: 768px) {
-    .md\:grid-cols-4 {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-}
-
-.line-clamp-1 {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1;
-    word-wrap: anywhere;
-}
-
-.h-40 {
-    height: 160px;
-}
-.w-40 {
-    width: 160px;
-}
-
-.w-7 {
-    width: 28px;
-}
-.h-7 {
-    height: 28px;
-}
-
-.opacity-0 {
-    opacity: 0;
-}
-
-.group:hover .group-hover\:opacity-100 {
-    opacity: 1;
-}
-
-.transition-all {
-    transition-duration: 0.15s;
-    transition-property: all;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.duration-300 {
-    transition-duration: 0.3s;
-}
-
-.ease-in-out {
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}
-</style>

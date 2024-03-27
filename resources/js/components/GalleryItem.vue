@@ -1,7 +1,6 @@
 <template>
     <li class="relative">
         <div
-            class="overflow-hidden"
             :class="{
                 'border-transparent': !error,
                 'border-red-500': !!error,
@@ -9,7 +8,10 @@
                 'cursor-pointer': !value.processing,
             }"
         >
-            <div class="relative select-none w-full h-40">
+            <div
+                class="relative select-none w-full h-40"
+                @click.prevent="showDetail"
+            >
                 <GalleryPicture :value="value" :field="field" />
 
                 <div
@@ -70,150 +72,127 @@
                     <p>{{ humanFileSize(value.size) }}</p>
                 </div>
 
-                <Dropdown
-                    placement="bottom-start"
-                    class="btn-block place-self-start"
-                >
-                    <DropdownTrigger
-                        :show-arrow="false"
-                        class="h-7 w-7 bg-gray-100 dark:bg-gray-900"
-                    >
-                        <Icon type="menu" width="16" solid />
-                    </DropdownTrigger>
-
-                    <template #menu>
-                        <DropdownMenu width="auto">
-                            <div class="flex flex-col py-1">
-                                <DropdownMenuItem
-                                    as="button"
-                                    class="flex py-1 hover:bg-gray-100"
-                                    @click.prevent="showDetail"
-                                >
-                                    <Icon
-                                        class="flex-shrink-0"
-                                        type="eye"
-                                        width="20"
-                                        height="20"
-                                    />
-                                    <span class="ml-2">
-                                        {{ __("Details") }}
-                                    </span>
-                                </DropdownMenuItem>
-
-                                <DropdownMenuItem
-                                    v-if="
-                                        !readonly &&
-                                        field.customPropertiesFields
-                                    "
-                                    as="button"
-                                    class="flex py-1 hover:bg-gray-100"
-                                    @click.prevent="editCustomProperties"
-                                >
-                                    <Icon
-                                        class="flex-shrink-0"
-                                        type="pencil"
-                                        width="20"
-                                        height="20"
-                                    />
-                                    <span class="ml-2">
-                                        {{ __("Properties") }}
-                                    </span>
-                                </DropdownMenuItem>
-
-                                <DropdownMenuItem
-                                    :href="value.conversion.original"
-                                    as="external"
-                                    target="_blank"
-                                    class="flex py-1 hover:bg-gray-100"
-                                >
-                                    <Icon
-                                        class="flex-shrink-0"
-                                        type="external-link"
-                                        width="20"
-                                        height="20"
-                                    />
-                                    <span class="ml-2">
-                                        {{ __("Open") }}
-                                    </span>
-                                </DropdownMenuItem>
-
-                                <DropdownMenuItem
-                                    :href="value.conversion.original"
-                                    as="external"
-                                    target="_blank"
-                                    download
-                                    class="flex py-1 hover:bg-gray-100"
-                                >
-                                    <Icon
-                                        class="flex-shrink-0"
-                                        type="download"
-                                        width="20"
-                                        height="20"
-                                    />
-                                    <span class="ml-2">
-                                        {{ __("Download") }}
-                                    </span>
-                                </DropdownMenuItem>
-
-                                <DropdownMenuItem
-                                    as="button"
-                                    class="flex py-1 hover:bg-gray-100"
-                                    @click.prevent="
-                                        () =>
-                                            copyToClipboard(
-                                                value.conversion.original
-                                            )
-                                    "
-                                >
-                                    <Icon
-                                        class="flex-shrink-0"
-                                        type="clipboard-copy"
-                                        width="20"
-                                        height="20"
-                                    />
-                                    <span class="ml-2">
-                                        {{ __("Copy Url") }}
-                                    </span>
-                                </DropdownMenuItem>
-
-                                <DropdownMenuItem
-                                    v-if="!readonly && !value?.markForUpload"
-                                    as="button"
-                                    class="flex py-1 hover:bg-gray-100"
-                                    :destructive="true"
-                                    @click.prevent="regenerateFile"
-                                >
-                                    <Icon
-                                        class="flex-shrink-0"
-                                        type="refresh"
-                                        width="20"
-                                        height="20"
-                                    />
-                                    <span class="ml-2">
-                                        {{ __("Regenerate") }}
-                                    </span>
-                                </DropdownMenuItem>
-
-                                <DropdownMenuItem
-                                    v-if="!readonly"
-                                    as="button"
-                                    class="flex py-1 hover:bg-gray-100"
-                                    :destructive="true"
-                                    @click.prevent="deleteFile"
-                                >
-                                    <Icon
-                                        class="flex-shrink-0"
-                                        type="trash"
-                                        width="20"
-                                        height="20"
-                                    />
-                                    <span class="ml-2">
-                                        {{ __("Delete") }}
-                                    </span>
-                                </DropdownMenuItem>
-                            </div>
-                        </DropdownMenu>
+                <Dropdown class="ml-auto">
+                    <template #trigger>
+                        <div
+                            class="cursor-pointer flex items-center justify-center w-7 h-7 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-900"
+                        >
+                            <Icon type="dots-vertical" width="16" height="16" />
+                        </div>
                     </template>
+
+                    <DropdownMenu @click.prevent="showDetail" as="button">
+                        <Icon
+                            class="flex-shrink-0"
+                            type="eye"
+                            width="20"
+                            height="20"
+                        />
+                        <span class="ml-2">
+                            {{ __("Details") }}
+                        </span>
+                    </DropdownMenu>
+
+                    <DropdownMenu
+                        v-if="!readonly && field.customPropertiesFields"
+                        @click.prevent="editCustomProperties"
+                        as="button"
+                    >
+                        <Icon
+                            class="flex-shrink-0"
+                            type="pencil"
+                            width="20"
+                            height="20"
+                        />
+                        <span class="ml-2">
+                            {{ __("Properties") }}
+                        </span>
+                    </DropdownMenu>
+
+                    <DropdownMenu
+                        :href="value.conversion.original"
+                        as="external"
+                        target="_blank"
+                    >
+                        <Icon
+                            class="flex-shrink-0"
+                            type="external-link"
+                            width="20"
+                            height="20"
+                        />
+                        <span class="ml-2">
+                            {{ __("Open") }}
+                        </span>
+                    </DropdownMenu>
+
+                    <DropdownMenu
+                        :href="value.conversion.original"
+                        as="external"
+                        target="_blank"
+                        download
+                    >
+                        <Icon
+                            class="flex-shrink-0"
+                            type="download"
+                            width="20"
+                            height="20"
+                        />
+                        <span class="ml-2">
+                            {{ __("Download") }}
+                        </span>
+                    </DropdownMenu>
+
+                    <DropdownMenu
+                        as="button"
+                        @click.prevent="
+                            () => copyToClipboard(value.conversion.original)
+                        "
+                    >
+                        <Icon
+                            class="flex-shrink-0"
+                            type="clipboard-copy"
+                            width="20"
+                            height="20"
+                        />
+                        <span class="ml-2">
+                            {{ __("Copy Url") }}
+                        </span>
+                    </DropdownMenu>
+
+                    <DropdownMenu
+                        v-if="!readonly && !value?.markForUpload"
+                        as="button"
+                        :destructive="true"
+                        @click.prevent="regenerateFile"
+                    >
+                        <Icon
+                            class="flex-shrink-0"
+                            type="refresh"
+                            width="20"
+                            height="20"
+                        />
+                        <span class="ml-2">
+                            {{ __("Regenerate") }}
+                        </span>
+                    </DropdownMenu>
+
+                    <DropdownMenu
+                        class="text-red-500"
+                        v-if="!readonly"
+                        as="button"
+                        :destructive="true"
+                        @click.prevent="deleteFile"
+                    >
+                        <Icon
+                            class="flex-shrink-0"
+                            type="trash"
+                            width="20"
+                            height="20"
+                        />
+                        <span class="ml-2">
+                            {{ __("Delete") }}
+                        </span>
+                    </DropdownMenu>
                 </Dropdown>
             </div>
         </div>
@@ -227,42 +206,37 @@
     </li>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import dot from "dot-object";
 import { computed } from "vue";
 import useHumanizeFileSize from "../composables/useHumanizeFileSize";
 import useCopyToClipboard from "../composables/useCopyToClipboard";
 import useMediaManipulations from "../composables/useMediaManipulations";
 import useDotObject from "../composables/useDotObject";
+import Dropdown from "./Elements/Dropdown.vue";
+import DropdownMenu from "./Elements/DropdownMenu.vue";
 
-const props = defineProps({
-    value: {
-        type: Array,
-        required: true,
-    },
-    field: {
-        type: Object,
-        required: true,
-    },
-    readonly: {
-        type: Boolean,
-        default: false,
-    },
-    draggable: {
-        type: Boolean,
-        default: false,
-    },
-    errors: {
-        type: Object,
-    },
-});
+const props = withDefaults(
+    defineProps<{
+        value: any;
+        field: any;
+        readonly?: boolean;
+        draggable?: boolean;
+        errors?: any;
+    }>(),
+    {
+        readonly: false,
+        draggable: false,
+        errors: null,
+    }
+);
 
-const emit = defineEmits([
-    "showDetail",
-    "delete",
-    "input",
-    "editCustomProperties",
-]);
+const emit = defineEmits<{
+    (e: "showDetail", value: any): void;
+    (e: "delete", value: any): void;
+    (e: "input", value: any): void;
+    (e: "editCustomProperties", value: any): void;
+}>();
 
 const { copyToClipboard } = useCopyToClipboard();
 const { humanFileSize } = useHumanizeFileSize();
@@ -298,23 +272,3 @@ const regenerateFile = () => {
     });
 };
 </script>
-
-<style>
-.overlay-content-bg {
-    background-color: rgba(var(--colors-gray-900), 0.85);
-}
-
-.dragged .dragged-indicator {
-    opacity: 10;
-}
-
-.animate-spin {
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(1turn);
-    }
-}
-</style>
