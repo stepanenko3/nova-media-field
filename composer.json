@@ -34,10 +34,6 @@
         {
             "type": "composer",
             "url": "https://laravelsatis.com"
-        },
-        {
-            "type": "path",
-            "url": "../nova-filemanager"
         }
     ],
     "require-dev": {
