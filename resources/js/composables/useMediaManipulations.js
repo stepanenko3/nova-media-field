@@ -1,13 +1,26 @@
 export default function useMediaManipulations() {
     async function regenerate(id) {
-        const res = await Nova.request().post(`/nova-vendor/stepanenko3/nova-media-field/${id}/regenerate`);
+        const response = await fetch(
+            `/nova-vendor/stepanenko3/nova-media-field/${id}/regenerate`,
+            {
+                method: 'POST',
+                headers: {
+                    "X-CSRF-TOKEN": document.head.querySelector(
+                        'meta[name="csrf-token"]'
+                    ).content,
+                    "X-Requested-With": "XMLHttpRequest",
+                    "Content-Type": "application/json",
+                },
+            },
+        );
 
-        if (res.data.success) {
+        const data = await response.json();
+
+        if (response.ok && data.success) {
             Nova.success('Media was regenerated!');
         } else {
-            Nova.error(res.data.message);
+            Nova.error(data.message);
         }
-
     };
 
     return {
