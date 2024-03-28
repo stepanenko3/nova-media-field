@@ -26,6 +26,7 @@ A Laravel Nova field for laravel-medilibrary.
 
 - `php: >=8.0`
 - `laravel/nova: ^4.0`
+- `spatie/laravel-medilibrary`: ^11.4
 
 ## Installation
 
@@ -44,6 +45,10 @@ Media::make(__('Image'), 'image'), // Single image. Auto detect from collection
 
 Media::make(__('Images'), 'images'), // Multiple images. Auto detect from collection
 
+// File manager
+// compore require stepanenko3/nova-filemanager
+Media::make(__('Image'), 'image')
+    ->fileManager(),
 
 // Validation rules
 
