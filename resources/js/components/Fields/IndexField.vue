@@ -1,6 +1,6 @@
 <template>
     <div
-        class="flex items-center justify-start"
+        class="flex items-center justify-start nova-media-field"
         :style="{
             width: `${width}px`,
         }"
@@ -25,19 +25,13 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from "vue";
 
-const props = defineProps({
-    resourceName: {
-        type: String,
-        required: true,
-    },
-    field: {
-        type: Object,
-        required: true,
-    },
-});
+const props = defineProps<{
+    resourceName: string;
+    field: object;
+}>();
 
 const value = computed(() => props.field.displayedAs || props.field.value);
 
@@ -58,9 +52,3 @@ const width = computed(() => {
     return count * 32 - (count - 1) * 16;
 });
 </script>
-
-<style>
-.-ml-4 {
-    margin-left: -16px;
-}
-</style>

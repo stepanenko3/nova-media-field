@@ -6,29 +6,32 @@
         :full-width-content="fullWidthContent"
     >
         <template #field>
-            <div class="grid gap-4">
-                <DropZone
-                    v-if="!field.readonly"
-                    :multiple="field.multiple"
-                    :disabled="field.readonly"
-                    :accepted-types="field.acceptedTypes"
-                    :dusk="`${field.attribute}-delete-link`"
-                    :input-dusk="field.attribute"
-                    @fileChanged="handleFileChange"
-                    @openFileManager="fileManagerState = true"
-                />
+            <div class="nova-media-field">
+                <div class="grid gap-4">
+                    <DropZone
+                        v-if="!field.readonly"
+                        :attribute="field.attribute"
+                        :multiple="field.multiple"
+                        :disabled="field.readonly"
+                        :accepted-types="field.acceptedTypes"
+                        :dusk="`${field.attribute}-delete-link`"
+                        :file-manager="field?.fileManager || false"
+                        @fileChanged="handleFileChange"
+                        @openFileManager="fileManagerState = true"
+                    />
 
-                <Gallery
-                    :value="field.value"
-                    :field="field"
-                    :multiple="field.multiple"
-                    :readonly="field.readonly"
-                    :errors="errors"
-                    @input="field.value = $event"
-                />
+                    <Gallery
+                        :value="field.value"
+                        :field="field"
+                        :multiple="field.multiple"
+                        :readonly="field.readonly"
+                        :errors="errors"
+                        @input="field.value = $event"
+                    />
+                </div>
             </div>
 
-            <Teleport to="body">
+            <Teleport to="body" v-if="field?.fileManager || false">
                 <BrowserModal
                     :multiple="field.multiple"
                     :selecting="true"
@@ -44,8 +47,8 @@
 import { FormField, HandlesValidationErrors } from "laravel-nova";
 import uniqid from "uniqid";
 import { serialize } from "object-to-formdata";
-import { BrowserModal } from "nova-file-manager";
 import DropZone from "../DropZone.vue";
+import { BrowserModal } from "@vendor/stepanenko3/nova-filemanager/dist/js/package.js";
 
 export default {
     mixins: [FormField, HandlesValidationErrors],
@@ -86,6 +89,10 @@ export default {
                         original: file.url,
                     },
                     generated_conversions: {},
+                    custom_properties: {
+                        source: 'media',
+                        path: file.url,
+                    },
                     markForUpload: true,
                     file: new File(
                         [await fetch(file.url).then((r) => r.blob())],
@@ -127,6 +134,7 @@ export default {
                     conversion: {
                         original: URL.createObjectURL(file),
                     },
+                    custom_properties: file.custom_properties || {},
                     generated_conversions: {},
                     markForUpload: true,
                     file: file,

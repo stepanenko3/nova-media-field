@@ -26,6 +26,7 @@ A Laravel Nova field for laravel-medilibrary.
 
 - `php: >=8.0`
 - `laravel/nova: ^4.0`
+- `spatie/laravel-medilibrary`: ^11.4
 
 ## Installation
 
@@ -43,7 +44,6 @@ use use Stepanenko3\NovaMediaField\Fields\Media;
 Media::make(__('Image'), 'image'), // Single image. Auto detect from collection
 
 Media::make(__('Images'), 'images'), // Multiple images. Auto detect from collection
-
 
 // Validation rules
 
@@ -83,6 +83,34 @@ Media::make('Images', 'images')
     ->countOfImagesDisplayedOnIndex(2)
     ->rules(['required', 'array', 'max:4'])
     ->singleMediaRules(['image', 'max:80']),
+```
+
+## Usage with File Manager
+
+### Install stepanenko3/nova-filemanager
+
+```bash
+compore require stepanenko3/nova-filemanager
+```
+
+### Register Service provider
+
+```php
+// app/Providers/NovaServiceProvider.php
+
+public function tools(): array
+{
+    return [
+        new Stepanenko3\NovaFileManager\FileManagerTool,
+    ];
+}
+```
+
+### Use Media field with File Manager
+
+```php
+Media::make(__('Image'), 'image')
+    ->fileManager(),
 ```
 
 ## Screenshots

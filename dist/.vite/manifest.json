@@ -1,0 +1,12 @@
+{
+  "resources/js/field.js": {
+    "file": "js/field.js",
+    "name": "field",
+    "src": "resources/js/field.js",
+    "isEntry": true
+  },
+  "style.css": {
+    "file": "css/field.css",
+    "src": "style.css"
+  }
+}

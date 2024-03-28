@@ -8,7 +8,6 @@ use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
 use Laravel\Nova\Fields\Field;
 use Laravel\Nova\Http\Requests\NovaRequest;
-use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
 use Stepanenko3\NovaMediaField\Traits\MediaCustomPropertiesTrait;
 use Stepanenko3\NovaMediaField\Traits\MediaHasConversionsTrait;
@@ -33,79 +32,94 @@ class Media extends Field
 
     protected Carbon $secureUntil;
 
-    public function resolve($resource, $attribute = null): void
-    {
+    public function resolve(
+        $resource,
+        $attribute = null,
+    ): void {
         $collection = $attribute ?? $this->attribute;
 
         $this->value = $resource
             ->getMedia($collection)
-            ->map(
-                fn (SpatieMedia $media) => $this->serializeMedia($media),
-            )
+            ->map(fn ($media) => $this->serializeMedia(
+                media: $media,
+            ))
             ->values();
 
         if ($collection) {
-            $this->checkCollectionIsMultiple($resource, $collection);
+            $this->checkCollectionIsMultiple(
+                resource: $resource,
+                collectionName: $collection,
+            );
         }
     }
 
-    public function temporary(Carbon $until): self
-    {
+    public function temporary(
+        Carbon $until,
+    ): self {
         $this->secureUntil = $until;
 
         return $this;
     }
 
-    public function rules($rules): self
-    {
-        $this->collectionMediaRules = ($rules instanceof Rule || is_string($rules)) ? func_get_args() : $rules;
+    public function rules(
+        $rules,
+    ): self {
+        $this->collectionMediaRules = ($rules instanceof Rule || is_string($rules))
+            ? func_get_args()
+            : $rules;
 
         return $this;
     }
 
-    public function singleMediaRules($rules): self
-    {
-        $this->singleMediaRules = ($rules instanceof Rule || is_string($rules)) ? func_get_args() : $rules;
+    public function singleMediaRules(
+        $rules,
+    ): self {
+        $this->singleMediaRules = ($rules instanceof Rule || is_string($rules))
+            ? func_get_args()
+            : $rules;
 
         return $this;
     }
 
-    public function serializeMediaUsing(callable $serializeMediaUsing): self
-    {
+    public function serializeMediaUsing(
+        callable $serializeMediaUsing,
+    ): self {
         $this->serializeMediaCallback = $serializeMediaUsing;
 
         return $this;
     }
 
-    public function getGeneratedConversionsUrls(SpatieMedia $media): array
-    {
+    public function getGeneratedConversionsUrls(
+        mixed $media,
+    ): array {
         return collect($media->generated_conversions)
             ->filter()
             ->keys()
             ->mapWithKeys(fn (string $conversion) => [
-                $conversion => $media->getFullUrl($conversion),
+                $conversion => $media->getFullUrl(
+                    conversionName: $conversion,
+                ),
             ])
             ->toArray();
     }
 
-    /**
-     * Get the urls for the given media.
-     *
-     * @param mixed $media
-     *
-     * @return array
-     */
-    public function getMediaUrls($media)
-    {
+    public function getMediaUrls(
+        mixed $media,
+    ): array {
         if (isset($this->secureUntil) && $this->secureUntil instanceof Carbon) {
-            return $this->getTemporaryConversionUrls($media);
+            return $this->getTemporaryConversionUrls(
+                media: $media,
+            );
         }
 
-        return $this->getConversionUrls($media);
+        return $this->getConversionUrls(
+            media: $media,
+        );
     }
 
-    public function serializeMedia(SpatieMedia $media): array
-    {
+    public function serializeMedia(
+        mixed $media,
+    ): array {
         if ($this->serializeMediaCallback) {
             return call_user_func($this->serializeMediaCallback, $media);
         }
@@ -132,8 +146,19 @@ class Media extends Field
         );
     }
 
-    public function countOfImagesDisplayedOnIndex(int $count): self
-    {
+    public function fileManager(
+        bool $show = true,
+    ): self {
+        $this->withMeta([
+            'fileManager' => $show,
+        ]);
+
+        return $this;
+    }
+
+    public function countOfImagesDisplayedOnIndex(
+        int $count,
+    ): self {
         $this->withMeta([
             'countOfImagesDisplayedOnIndex' => $count,
         ]);
@@ -141,12 +166,18 @@ class Media extends Field
         return $this;
     }
 
-    protected function checkCollectionIsMultiple(HasMedia $resource, string $collectionName): void
-    {
+    protected function checkCollectionIsMultiple(
+        mixed $resource,
+        string $collectionName,
+    ): void {
         $resource->registerMediaCollections();
 
         $isSingle = collect($resource->mediaCollections)
-            ->where('name', $collectionName)
+            ->where(
+                key: 'name',
+                operator: '=',
+                value: $collectionName,
+            )
             ->first()
             ->singleFile ?? false;
 
@@ -155,13 +186,12 @@ class Media extends Field
         ]);
     }
 
-    /**
-     * @param HasMedia $model
-     * @param mixed $requestAttribute
-     * @param mixed $attribute
-     */
-    protected function fillAttributeFromRequest(NovaRequest $request, $requestAttribute, $model, $attribute): void
-    {
+    protected function fillAttributeFromRequest(
+        NovaRequest $request,
+        mixed $requestAttribute,
+        mixed $model,
+        mixed $attribute,
+    ): void {
         $request->validate([
             $requestAttribute => $this->collectionMediaRules,
             $requestAttribute . '.*.id' => 'required|string',
@@ -170,25 +200,47 @@ class Media extends Field
             $requestAttribute . '.*.order' => 'nullable|numeric',
             $requestAttribute . '.*.custom_properties' => 'nullable|array',
 
-            ...$this->customPropertiesValidationRules($requestAttribute . '.*.custom_properties'),
+            ...$this->customPropertiesValidationRules(
+                prefix: $requestAttribute . '.*.custom_properties',
+            ),
         ]);
 
         $requestData = Arr::where(
-            Arr::get(
+            array: Arr::get(
                 $request->all($requestAttribute),
                 $requestAttribute,
             ) ?: [],
-            fn ($fileData) => isset($fileData['id']),
+            callback: fn ($fileData) => isset($fileData['id']),
         );
 
         $pipes = [
-            fn ($payload, $next) => $this->deleteFiles($payload, $model, $attribute, $next),
-            fn ($payload, $next) => $this->updateFilesCustomProperties($payload, $model, $attribute, $next),
-            fn ($payload, $next) => $this->uploadFiles($payload, $model, $attribute, $next),
+            fn ($payload, $next) => $this->deleteFiles(
+                payload: $payload,
+                model: $model,
+                attribute: $attribute,
+                next: $next,
+            ),
+            fn ($payload, $next) => $this->updateFilesCustomProperties(
+                payload: $payload,
+                model: $model,
+                attribute: $attribute,
+                next: $next,
+            ),
+            fn ($payload, $next) => $this->uploadFiles(
+                payload: $payload,
+                model: $model,
+                attribute: $attribute,
+                next: $next,
+            ),
         ];
 
         if (!$request->isCreateOrAttachRequest()) {
-            $pipes[] = fn ($payload, $next) => $this->reorderFiles($payload, $model, $attribute, $next);
+            $pipes[] = fn ($payload, $next) => $this->reorderFiles(
+                payload: $payload,
+                model: $model,
+                attribute: $attribute,
+                next: $next,
+            );
         }
 
         app(Pipeline::class)
@@ -199,29 +251,42 @@ class Media extends Field
             });
     }
 
-    protected function deleteFiles(array $payload, HasMedia $model, string $attribute, callable $next)
-    {
+    protected function deleteFiles(
+        array $payload,
+        mixed $model,
+        string $attribute,
+        callable $next,
+    ) {
         $ids = collect($payload)
             ->filter(fn ($fileData) => $fileData['delete'] ?? false)
             ->pluck('id')
             ->toArray();
 
-        $model->media()->whereIn('id', $ids)->delete();
+        $model
+            ->media()
+            ->whereIn('id', $ids)
+            ->delete();
 
         $payload = Arr::where(
-            $payload,
-            fn ($fileData) => !in_array($fileData['id'], $ids),
+            array: $payload,
+            callback: fn ($fileData) => !in_array($fileData['id'], $ids),
         );
 
         return $next($payload);
     }
 
-    protected function uploadFiles(array $payload, HasMedia $model, string $attribute, callable $next)
-    {
+    protected function uploadFiles(
+        array $payload,
+        mixed $model,
+        string $attribute,
+        callable $next,
+    ) {
         $payload = collect($payload)
             ->mapWithKeys(function ($fileData) use ($model, $attribute) {
                 if (!array_key_exists('file', $fileData)) {
-                    return [$fileData['id'] => $fileData];
+                    return [
+                        $fileData['id'] => $fileData,
+                    ];
                 }
 
                 $media = $model
@@ -240,15 +305,23 @@ class Media extends Field
         return $next($payload);
     }
 
-    protected function reorderFiles(array $payload, HasMedia $model, string $attribute, callable $next)
-    {
+    protected function reorderFiles(
+        array $payload,
+        mixed $model,
+        string $attribute,
+        callable $next,
+    ) {
         $sort = collect($payload)
-            ->mapWithKeys(fn ($fileData) => [$fileData['order'] => $fileData['id']])
+            ->mapWithKeys(fn ($fileData) => [
+                $fileData['order'] => $fileData['id'],
+            ])
             ->sortKeys()
             ->values()
             ->toArray();
 
-        SpatieMedia::setNewOrder($sort);
+        SpatieMedia::setNewOrder(
+            ids: $sort,
+        );
 
         return $next($payload);
     }

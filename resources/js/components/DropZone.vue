@@ -48,14 +48,15 @@
             }"
         >
             <div
-                class="flex items-center justify-center p-2 cursor-pointer bg-white dark:bg-gray-800 border border-gray-500 dark:border-gray-800 rounded-lg text-gray-500 dark:text-gray-200 hover:opacity-75"
+                v-if="fileManager"
+                class="flex items-center justify-center p-2 cursor-pointer bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-800 rounded-lg text-gray-500 dark:text-gray-200 hover:opacity-75"
                 @click.prevent.stop="emit('openFileManager')"
             >
                 {{ __("File manager") }}
             </div>
 
             <label
-                class="flex items-center justify-center p-2 cursor-pointer bg-white dark:bg-gray-800 border border-gray-500 dark:border-gray-800 rounded-lg text-gray-500 dark:text-gray-200 hover:opacity-75"
+                class="flex items-center justify-center p-2 cursor-pointer bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-800 rounded-lg text-gray-500 dark:text-gray-200 hover:opacity-75"
             >
                 {{ multiple ? __("Choose Files") : __("Choose File") }}
 
@@ -100,7 +101,9 @@
                     ></path>
                 </svg>
 
-                <span class="text-sm text-gray-500 dark:text-gray-400 font-semibold">
+                <span
+                    class="text-sm text-gray-500 dark:text-gray-400 font-semibold"
+                >
                     {{ __("Drop your files here") }}
                 </span>
             </div>
@@ -108,43 +111,42 @@
     </div>
 </template>
 
-<script setup>
-import { ref } from "vue";
+<script setup lang="ts">
+import { Ref, ref } from "vue";
 
-const props = defineProps({
-    helpText: {
-        type: String,
-    },
-    attribute: {
-        type: String,
-        required: true,
-    },
-    acceptedTypes: {
-        type: String,
-        default: null,
-    },
-    multiple: {
-        type: Boolean,
-        default: false,
-    },
-    disabled: {
-        type: Boolean,
-        default: false,
-    },
-});
+const props = withDefaults(
+    defineProps<{
+        attribute: string;
+        helpText?: string;
+        acceptedTypes?: string;
+        multiple?: boolean;
+        disabled?: boolean;
+        fileManager?: boolean;
+    }>(),
+    {
+        helpText: "",
+        acceptedTypes: "image/*",
+        multiple: false,
+        disabled: false,
+        fileManager: false,
+    }
+);
 
-const emit = defineEmits(["openFileManager", "fileChanged"]);
+const emit = defineEmits<{
+    (e: "openFileManager"): void;
+    (e: "fileChanged", value: any): void;
+}>();
 
-const demFiles = ref([]);
-const fileInput = ref();
-const dragging = ref(false);
+const demFiles: Ref<any> = ref([]);
+const fileInput: Ref<any> = ref();
+const dragging: Ref<boolean> = ref(false);
 
-function dropFiles(e) {
+function dropFiles(e: DragEvent) {
     dragging.value = false;
 
     demFiles.value = props.multiple
-        ? e.dataTransfer.files
-        : [e.dataTransfer.files[0]];
+        ? e?.dataTransfer?.files
+        : [e?.dataTransfer?.files?.[0]];
 
     emit("fileChanged", demFiles.value);
 }
@@ -159,9 +161,3 @@ const handleChange = () => {
     fileInput.value.files = null;
 };
 </script>
-
-<style>
-.pointer-events-none {
-    pointer-events: none;
-}
-</style>

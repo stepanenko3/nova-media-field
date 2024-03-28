@@ -13,20 +13,14 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import mime from "mime";
 import { computed } from "vue";
 
-const props = defineProps({
-    value: {
-        type: Object,
-        required: true,
-    },
-    field: {
-        type: Object,
-        required: true,
-    },
-});
+const props = defineProps<{
+    value: any;
+    field: any;
+}>();
 
 const fileType = computed(() => mime.getType(props.value.file_name));
 const fileExtension = computed(
@@ -35,13 +29,3 @@ const fileExtension = computed(
         mime.getExtension(fileType.value)
 );
 </script>
-
-<style>
-.object-cover {
-    object-fit: cover;
-}
-
-.object-center {
-    object-position: center;
-}
-</style>
