@@ -42,7 +42,7 @@
         </p>
 
         <div
-            class="flex justify-center items-center space-x-2"
+            class="flex flex-col md:flex-row gap-2 justify-center items-center"
             :class="{
                 'pointer-events-none': dragging,
             }"

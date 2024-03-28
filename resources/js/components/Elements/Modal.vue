@@ -7,7 +7,7 @@
             @click.prevent="() => emit('close')"
         ></div>
         <div
-            class="relative p-6 bg-white dark:bg-gray-800 rounded-lg shadow min-w-80 md:w-1/2 max-w-full max-h-full overflow-y-auto"
+            class="relative p-3 md:p-6 bg-white dark:bg-gray-800 rounded-lg shadow min-w-80 md:w-1/2 max-w-full max-h-full overflow-y-auto scrollbar-hide"
             :class="contentClass"
         >
             <div

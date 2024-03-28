@@ -5,6 +5,8 @@ module.exports = {
         extend: {},
     },
     important: '.nova-media-field',
-    plugins: [],
+    plugins: [
+        require('tailwind-scrollbar-hide'),
+    ],
     darkMode: 'class'
 };

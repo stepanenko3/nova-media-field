@@ -31,6 +31,7 @@
         "object-to-formdata": "^4.5.1",
         "pinia": "^2.1.7",
         "sortablejs": "^1.15.2",
+        "tailwind-scrollbar-hide": "^1.1.7",
         "tailwindcss": "^3.4.3",
         "uniqid": "^5.4.0",
         "vue": "^3.4.21"

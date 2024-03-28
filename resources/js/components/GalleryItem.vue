@@ -1,6 +1,7 @@
 <template>
     <li class="relative">
         <div
+            class="flex md:flex-col"
             :class="{
                 'border-transparent': !error,
                 'border-red-500': !!error,
@@ -9,7 +10,7 @@
             }"
         >
             <div
-                class="relative select-none w-full h-40"
+                class="relative select-none h-24 w-24 md:h-32 lg:h-40 md:w-full flex-shrink-0"
                 @click.prevent="showDetail"
             >
                 <GalleryPicture :value="value" :field="field" />
@@ -47,10 +48,10 @@
                 </div>
             </div>
 
-            <div class="flex pt-2">
-                <div class="pr-2 flex-grow">
-                    <b
-                        class="line-clamp-1"
+            <div class="pl-4 md:pl-0 flex-grow">
+                <div class="w-full flex items-center pt-2">
+                    <div
+                        class="md:line-clamp-1 text-gray-900 dark:text-gray-200 font-medium"
                         :class="{
                             'text-yellow-500': value?.markForUpload,
                         }"
@@ -68,141 +69,145 @@
                                 ? __("This is a new file marked for upload")
                                 : value.file_name
                         }}
-                    </b>
-                    <p>{{ humanFileSize(value.size) }}</p>
-                </div>
+                    </div>
 
-                <Dropdown class="ml-auto">
-                    <template #trigger>
-                        <div
-                            class="cursor-pointer flex items-center justify-center w-7 h-7 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-900"
+                    <Dropdown class="flex-shrink-0 ml-auto">
+                        <template #trigger>
+                            <div
+                                class="cursor-pointer flex items-center justify-center w-7 h-7 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-900"
+                            >
+                                <Icon
+                                    type="dots-vertical"
+                                    width="16"
+                                    height="16"
+                                />
+                            </div>
+                        </template>
+
+                        <DropdownMenu @click.prevent="showDetail" as="button">
+                            <Icon
+                                class="flex-shrink-0"
+                                type="eye"
+                                width="20"
+                                height="20"
+                            />
+                            <span class="ml-2">
+                                {{ __("Details") }}
+                            </span>
+                        </DropdownMenu>
+
+                        <DropdownMenu
+                            v-if="!readonly && field.customPropertiesFields"
+                            @click.prevent="editCustomProperties"
+                            as="button"
                         >
-                            <Icon type="dots-vertical" width="16" height="16" />
-                        </div>
-                    </template>
+                            <Icon
+                                class="flex-shrink-0"
+                                type="pencil"
+                                width="20"
+                                height="20"
+                            />
+                            <span class="ml-2">
+                                {{ __("Properties") }}
+                            </span>
+                        </DropdownMenu>
 
-                    <DropdownMenu @click.prevent="showDetail" as="button">
-                        <Icon
-                            class="flex-shrink-0"
-                            type="eye"
-                            width="20"
-                            height="20"
-                        />
-                        <span class="ml-2">
-                            {{ __("Details") }}
-                        </span>
-                    </DropdownMenu>
+                        <DropdownMenu
+                            :href="value.conversion.original"
+                            as="external"
+                            target="_blank"
+                        >
+                            <Icon
+                                class="flex-shrink-0"
+                                type="external-link"
+                                width="20"
+                                height="20"
+                            />
+                            <span class="ml-2">
+                                {{ __("Open") }}
+                            </span>
+                        </DropdownMenu>
 
-                    <DropdownMenu
-                        v-if="!readonly && field.customPropertiesFields"
-                        @click.prevent="editCustomProperties"
-                        as="button"
-                    >
-                        <Icon
-                            class="flex-shrink-0"
-                            type="pencil"
-                            width="20"
-                            height="20"
-                        />
-                        <span class="ml-2">
-                            {{ __("Properties") }}
-                        </span>
-                    </DropdownMenu>
+                        <DropdownMenu
+                            :href="value.conversion.original"
+                            as="external"
+                            target="_blank"
+                            download
+                        >
+                            <Icon
+                                class="flex-shrink-0"
+                                type="download"
+                                width="20"
+                                height="20"
+                            />
+                            <span class="ml-2">
+                                {{ __("Download") }}
+                            </span>
+                        </DropdownMenu>
 
-                    <DropdownMenu
-                        :href="value.conversion.original"
-                        as="external"
-                        target="_blank"
-                    >
-                        <Icon
-                            class="flex-shrink-0"
-                            type="external-link"
-                            width="20"
-                            height="20"
-                        />
-                        <span class="ml-2">
-                            {{ __("Open") }}
-                        </span>
-                    </DropdownMenu>
+                        <DropdownMenu
+                            as="button"
+                            @click.prevent="
+                                () => copyToClipboard(value.conversion.original)
+                            "
+                        >
+                            <Icon
+                                class="flex-shrink-0"
+                                type="clipboard-copy"
+                                width="20"
+                                height="20"
+                            />
+                            <span class="ml-2">
+                                {{ __("Copy Url") }}
+                            </span>
+                        </DropdownMenu>
 
-                    <DropdownMenu
-                        :href="value.conversion.original"
-                        as="external"
-                        target="_blank"
-                        download
-                    >
-                        <Icon
-                            class="flex-shrink-0"
-                            type="download"
-                            width="20"
-                            height="20"
-                        />
-                        <span class="ml-2">
-                            {{ __("Download") }}
-                        </span>
-                    </DropdownMenu>
+                        <DropdownMenu
+                            v-if="!readonly && !value?.markForUpload"
+                            as="button"
+                            :destructive="true"
+                            @click.prevent="regenerateFile"
+                        >
+                            <Icon
+                                class="flex-shrink-0"
+                                type="refresh"
+                                width="20"
+                                height="20"
+                            />
+                            <span class="ml-2">
+                                {{ __("Regenerate") }}
+                            </span>
+                        </DropdownMenu>
 
-                    <DropdownMenu
-                        as="button"
-                        @click.prevent="
-                            () => copyToClipboard(value.conversion.original)
-                        "
-                    >
-                        <Icon
-                            class="flex-shrink-0"
-                            type="clipboard-copy"
-                            width="20"
-                            height="20"
-                        />
-                        <span class="ml-2">
-                            {{ __("Copy Url") }}
-                        </span>
-                    </DropdownMenu>
+                        <DropdownMenu
+                            class="text-red-500"
+                            v-if="!readonly"
+                            as="button"
+                            :destructive="true"
+                            @click.prevent="deleteFile"
+                        >
+                            <Icon
+                                class="flex-shrink-0"
+                                type="trash"
+                                width="20"
+                                height="20"
+                            />
+                            <span class="ml-2">
+                                {{ __("Delete") }}
+                            </span>
+                        </DropdownMenu>
+                    </Dropdown>
+                </div>
+                <p>{{ humanFileSize(value.size) }}</p>
 
-                    <DropdownMenu
-                        v-if="!readonly && !value?.markForUpload"
-                        as="button"
-                        :destructive="true"
-                        @click.prevent="regenerateFile"
-                    >
-                        <Icon
-                            class="flex-shrink-0"
-                            type="refresh"
-                            width="20"
-                            height="20"
-                        />
-                        <span class="ml-2">
-                            {{ __("Regenerate") }}
-                        </span>
-                    </DropdownMenu>
-
-                    <DropdownMenu
-                        class="text-red-500"
-                        v-if="!readonly"
-                        as="button"
-                        :destructive="true"
-                        @click.prevent="deleteFile"
-                    >
-                        <Icon
-                            class="flex-shrink-0"
-                            type="trash"
-                            width="20"
-                            height="20"
-                        />
-                        <span class="ml-2">
-                            {{ __("Delete") }}
-                        </span>
-                    </DropdownMenu>
-                </Dropdown>
+                <span
+                    v-if="fileErrors.length > 0"
+                    class="text-red-500 text-xs flex break-all"
+                >
+                    {{ fileErrors[0][0] }}
+                </span>
             </div>
         </div>
-
-        <span
-            v-if="fileErrors.length > 0"
-            class="text-red-500 text-xs flex break-all"
-        >
-            {{ fileErrors[0][0] }}
-        </span>
     </li>
 </template>
 
