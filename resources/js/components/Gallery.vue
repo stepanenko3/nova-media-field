@@ -1,6 +1,6 @@
 <template>
     <div v-if="value.length > 0" class="nova-media-field">
-        <ul ref="galleryWrapper" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <ul ref="galleryWrapper" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 md:gap-4">
             <GalleryItem
                 v-for="(image, index) in value"
                 :key="`${image.id}-${index}`"
