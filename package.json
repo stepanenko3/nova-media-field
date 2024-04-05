@@ -18,7 +18,7 @@
         "@vue/compiler-sfc": "^3.2.22",
         "postcss": "^8.3.11",
         "sass": "^1.74.1",
-        "vite": "^5.2.7"
+        "vite": "^5.2.8"
     },
     "dependencies": {
         "@rollup/plugin-alias": "^5.1.0",
