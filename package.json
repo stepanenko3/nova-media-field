@@ -27,7 +27,7 @@
         "dot-object": "^2.1.4",
         "form-backend-validation": "^2.4.0",
         "luxon": "^3.4.4",
-        "mime": "^4.0.1",
+        "mime": "^4.0.2",
         "object-to-formdata": "^4.5.1",
         "pinia": "^2.1.7",
         "sortablejs": "^1.15.2",
