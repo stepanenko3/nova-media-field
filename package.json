@@ -22,7 +22,7 @@
     },
     "dependencies": {
         "@rollup/plugin-alias": "^5.1.0",
-        "@vueuse/core": "^10.9.0",
+        "@vueuse/core": "^10.10.1",
         "autoprefixer": "^10.4.19",
         "dot-object": "^2.1.5",
         "form-backend-validation": "^2.4.0",
