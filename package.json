@@ -29,7 +29,7 @@
         "luxon": "^3.4.4",
         "mime": "^4.0.3",
         "object-to-formdata": "^4.5.1",
-        "pinia": "^2.1.7",
+        "pinia": "^2.3.0",
         "sortablejs": "^1.15.6",
         "tailwind-scrollbar-hide": "^1.1.7",
         "tailwindcss": "^3.4.16",
